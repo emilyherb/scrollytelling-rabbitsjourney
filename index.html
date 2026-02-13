@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Bunny’s Journey</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400,600,700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <main class="stage" aria-label="Scrollytelling stage">
+      <div class="frame is-title" id="frame">
+        <!-- Background layer -->
+        <div class="bg">
+          <div class="light" id="light" aria-hidden="true"></div>
+          <div class="dust" aria-hidden="true"></div>
+        </div>
+
+        <!-- Title overlay (ears only) -->
+        <section class="title" id="titleOverlay" aria-label="Title screen">
+          <div class="title__stack">
+            <div class="title__kicker">a bunny’s pov</div>
+            <h1 class="title__headline">The Bunny’s Journey</h1>
+            <p class="title__sub">learning JavaScript through instinct, routine, and memory</p>
+            <p class="title__hint">scroll to begin</p>
+          </div>
+
+          <div class="ears" aria-hidden="true">
+            <div class="ear ear--left"></div>
+            <div class="ear ear--right"></div>
+          </div>
+        </section>
+
+        <!-- Bunny focal point (hidden on title) -->
+        <section class="scene" aria-label="Bunny scene">
+          <div class="bunnyWrap" id="bunnyWrap">
+            <!-- UPDATED bunny SVG: ears grouped so inner ear moves with outer ear -->
+            <svg
+              class="bunny"
+              id="bunnySvg"
+              viewBox="0 0 400 400"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <!-- Back leg -->
+              <ellipse cx="280" cy="320" rx="35" ry="50" fill="#7A5C3A"/>
+
+              <!-- Body -->
+              <ellipse cx="220" cy="260" rx="100" ry="80" fill="#8B6F47"/>
+
+              <!-- Chest (lighter) -->
+              <ellipse cx="180" cy="270" rx="45" ry="50" fill="#A0826D" opacity="0.6"/>
+
+              <!-- Tail -->
+              <circle cx="310" cy="270" r="28" fill="#8B6F47"/>
+              <circle cx="310" cy="270" r="20" fill="#D4C4B0" opacity="0.8"/>
+
+              <!-- Neck -->
+              <ellipse cx="150" cy="220" rx="40" ry="50" fill="#8B6F47"/>
+
+              <!-- Head -->
+              <ellipse cx="120" cy="180" rx="55" ry="60" fill="#8B6F47"/>
+
+              <!-- Cheek -->
+              <ellipse cx="100" cy="195" rx="25" ry="30" fill="#A0826D" opacity="0.7"/>
+
+              <!-- EARS (lowered together) -->
+              <g id="ears" transform="translate(0 14)">
+                <!-- Near ear group: outer + inner move together -->
+                <g class="earPath earPath--right">
+                  <ellipse
+                    cx="135" cy="150" rx="25" ry="65"
+                    fill="#8B6F47"
+                    transform="rotate(15 135 150)"
+                  />
+                  <ellipse
+                    cx="135" cy="150" rx="18" ry="52"
+                    fill="#A0826D"
+                    transform="rotate(15 135 150)"
+                  />
+                </g>
+
+                <!-- Far ear (no opacity now) -->
+                <g class="earPath earPath--left">
+                  <ellipse
+                    cx="115" cy="145" rx="20" ry="55"
+                    fill="#7A5C3A"
+                    transform="rotate(-10 115 145)"
+                  />
+                </g>
+              </g>
+
+              <!-- Eye -->
+              <circle cx="105" cy="175" r="9" fill="#3B2614"/>
+              <circle cx="107" cy="173" r="3" fill="#FFFFFF"/>
+
+              <!-- Nose -->
+              <ellipse cx="75" cy="190" rx="8" ry="10" fill="#6B5544"/>
+
+              <!-- Mouth -->
+              <path d="M 75 200 Q 80 205 85 203" stroke="#6B5544" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+              <!-- Front leg (far) -->
+              <ellipse cx="165" cy="320" rx="22" ry="45" fill="#7A5C3A"/>
+
+              <!-- Front leg (near) -->
+              <ellipse cx="190" cy="325" rx="24" ry="48" fill="#8B6F47"/>
+
+              <!-- Front paw pad (near) -->
+              <ellipse cx="190" cy="345" rx="15" ry="20" fill="#A0826D"/>
+
+              <!-- Back paw -->
+              <ellipse cx="285" cy="345" rx="40" ry="25" fill="#8B6F47"/>
+              <ellipse cx="285" cy="345" rx="30" ry="18" fill="#A0826D"/>
+
+              <!-- Whiskers -->
+              <line x1="75" y1="185" x2="35" y2="178" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
+              <line x1="75" y1="190" x2="30" y2="190" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
+              <line x1="75" y1="195" x2="35" y2="202" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
+            </svg>
+
+            <!-- Objects -->
+            <button class="obj hay" id="hay" type="button" aria-label="A loose piece of hay"></button>
+            <div class="obj bowl" id="bowl" aria-hidden="true"></div>
+            <div class="obj box" id="box" aria-hidden="true"></div>
+          </div>
+
+          <!-- Floating callouts -->
+          <div class="callouts" id="callouts" aria-hidden="true">
+            <!-- Naming Things: variables -->
+            <div class="callout callout--var" id="cHunger" style="--x:18%; --y:30%;">
+              <div class="callout__tag">let</div>
+              <div class="callout__text">hunger = <span id="hungerVal">?</span></div>
+            </div>
+
+            <div class="callout callout--var" id="cEnergy" style="--x:76%; --y:36%;">
+              <div class="callout__tag">let</div>
+              <div class="callout__text">energy = <span id="energyVal">?</span></div>
+            </div>
+
+            <div class="callout callout--var" id="cMood" style="--x:68%; --y:68%;">
+              <div class="callout__tag">let</div>
+              <div class="callout__text">mood = <span id="moodVal">?</span></div>
+            </div>
+
+            <div class="callout callout--const" id="cSafety" style="--x:24%; --y:70%;">
+              <div class="callout__tag">const</div>
+              <div class="callout__text">safety = stable</div>
+            </div>
+
+            <!-- Switch: conditionals -->
+            <button class="callout callout--if" data-stimulus="softVoice" style="--x:12%; --y:18%;" type="button">
+              <div class="callout__tag">if</div>
+              <div class="callout__text">soft voice → stay</div>
+            </button>
+
+            <button class="callout callout--if" data-stimulus="footsteps" style="--x:84%; --y:22%;" type="button">
+              <div class="callout__tag">if</div>
+              <div class="callout__text">footsteps → listen</div>
+            </button>
+
+            <button class="callout callout--if" data-stimulus="doorClose" style="--x:86%; --y:58%;" type="button">
+              <div class="callout__tag">if</div>
+              <div class="callout__text">door closes → pause</div>
+            </button>
+
+            <button class="callout callout--else" data-stimulus="loudSharp" style="--x:14%; --y:56%;" type="button">
+              <div class="callout__tag">else</div>
+              <div class="callout__text">loud sound → hide</div>
+            </button>
+
+            <button class="callout callout--else" data-stimulus="fastShadow" style="--x:50%; --y:14%;" type="button">
+              <div class="callout__tag">else</div>
+              <div class="callout__text">fast shadow → hide</div>
+            </button>
+          </div>
+
+          <!-- Listening bar -->
+          <div class="soundbar" id="soundbar" aria-hidden="true">
+            <div class="soundbar__label">soundscape</div>
+            <div class="soundbar__row" id="soundRow"></div>
+          </div>
+        </section>
+
+        <!-- Captions -->
+        <section class="captionArea" aria-label="Captions">
+          <div class="captionKicker" id="captionKicker">—</div>
+          <div class="caption" id="caption">Scroll to begin.</div>
+          <div class="captionSmall" id="captionSmall"></div>
+        </section>
+      </div>
+
+      <!-- Scroll track -->
+      <div class="track" aria-hidden="true">
+        <div class="step" data-step="0"></div>
+        <div class="step" data-step="1"></div>
+        <div class="step" data-step="2"></div>
+        <div class="step" data-step="3"></div>
+        <div class="step" data-step="4"></div>
+        <div class="step" data-step="5"></div>
+        <div class="step" data-step="6"></div>
+        <div class="step" data-step="7"></div>
+        <div class="step" data-step="8"></div>
+        <div class="step" data-step="9"></div>
+      </div>
+    </main>
+
+    <!-- GSAP -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -5,12 +5,11 @@
   --ink:#1b1a19;
   --muted:rgba(27,26,25,.70);
 
-  /* NEW: hay green */
   --green:#8FBF8C;
 
-  /* Bunny browns (for title ears too) */
   --bunny-brown:#8B6F47;
   --bunny-dark:#7A5C3A;
+  --bunny-inner:#A0826D;
 
   --font-display:"Fraunces", ui-serif, Georgia, serif;
   --font-body:"Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -75,7 +74,7 @@ body{
 }
 @keyframes drift { from{ transform: translateY(0);} to{ transform: translateY(70px);} }
 
-/* Scene layout */
+/* Scene */
 .scene{
   position: relative;
   z-index: 2;
@@ -93,10 +92,11 @@ body{
   place-items:center;
 }
 
-/* Bunny hidden during title */
+/* Hide bunny + caption on title */
 .frame.is-title .scene{ visibility: hidden; opacity: 0; }
+.frame.is-title #captionArea{ opacity: 0; pointer-events:none; }
 
-/* Bunny SVG */
+/* Bunny */
 .bunny{
   width: 100%;
   height: auto;
@@ -107,11 +107,13 @@ body{
 /* Objects */
 .obj{ position:absolute; border:none; background:transparent; padding:0; }
 
-/* Hay: hidden by default; shown only in First Contact via JS */
+/* Hay: LEFT, in front of bunny */
 .hay{
   width: 62px; height: 18px; border-radius:999px;
   background: var(--green);
-  left: 56%; bottom: 18%;
+  left: 16%;
+  bottom: 26%;
+  z-index: 8;
   box-shadow: 0 12px 18px rgba(0,0,0,.10);
   cursor:pointer;
   transition: transform 420ms ease, opacity 300ms ease;
@@ -119,14 +121,13 @@ body{
   pointer-events: none;
 }
 
-/* Bowl: moved right + above bunny so it’s visible */
 .bowl{
   width: 64px; height: 30px; border-radius: 0 0 999px 999px;
   background: rgba(0,0,0,.14);
   left: 86%;
   bottom: 22%;
   opacity: 0;
-  z-index: 5;
+  z-index: 6;
   box-shadow: 0 14px 24px rgba(0,0,0,.10);
   transition: opacity 500ms ease, transform 650ms ease;
 }
@@ -145,7 +146,7 @@ body{
   position:absolute;
   inset: 14px;
   border-radius: var(--radius);
-  z-index: 6;
+  z-index: 7;
   pointer-events:none;
 }
 
@@ -209,6 +210,7 @@ body{
   border: 1px solid rgba(0,0,0,.07);
   backdrop-filter: blur(10px);
   overflow:hidden;
+  transition: opacity 300ms ease;
 }
 
 .captionKicker{
@@ -235,7 +237,7 @@ body{
 /* Listening bar */
 .soundbar{
   position:absolute;
-  z-index: 7;
+  z-index: 9;
   left: 18px; right: 18px; bottom: 18px;
   padding: 12px 12px;
   border-radius: 16px;
@@ -296,10 +298,10 @@ body{
 }
 .title__hint{ margin-top: 18px; color: var(--muted); font-size: 13px; }
 
-/* Ears foreground (NOW brown like bunny) */
+/* Title ears: more pointed, no outline */
 .ears{
   position:absolute;
-  left:0; right:0; bottom:-12px;
+  left:0; right:0; bottom:-14px;
   height: 62%;
   pointer-events:none;
   display:flex;
@@ -307,16 +309,43 @@ body{
   padding: 0 10%;
   z-index: 1;
 }
+
 .ear{
-  width: min(210px, 28vw);
+  position: relative;
+  width: min(220px, 30vw);
   height: 110%;
-  border-radius: 999px 999px 60px 60px;
   background: var(--bunny-brown);
-  border: 10px solid #000;
-  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  box-shadow: 0 18px 40px rgba(0,0,0,.10);
   transform: rotate(var(--rot, 0deg)) translateY(var(--ear-y, 0px));
   transform-origin: 50% 100%;
+
+  /* pointy silhouette */
+  clip-path: polygon(
+    50% 0%,
+    70% 6%,
+    88% 20%,
+    98% 42%,
+    100% 70%,
+    92% 100%,
+    8% 100%,
+    0% 70%,
+    2% 42%,
+    12% 20%,
+    30% 6%
+  );
+  border-radius: 0 0 70px 70px;
 }
+
+.ear::after{
+  content:"";
+  position:absolute;
+  inset: 10% 18% 10% 18%;
+  background: color-mix(in srgb, var(--bunny-inner) 85%, transparent);
+  opacity: .65;
+  clip-path: inherit;
+  border-radius: inherit;
+}
+
 .ear--left{ --rot:-10deg; background: var(--bunny-dark); }
 .ear--right{ --rot:10deg; }
 

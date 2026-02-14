@@ -34,6 +34,7 @@
             <p class="title__hint">scroll to begin</p>
           </div>
 
+          <!-- Pointier ears, no outline -->
           <div class="ears" aria-hidden="true">
             <div class="ear ear--left"></div>
             <div class="ear ear--right"></div>
@@ -43,90 +44,89 @@
         <!-- Bunny focal point (hidden on title) -->
         <section class="scene" aria-label="Bunny scene">
           <div class="bunnyWrap" id="bunnyWrap">
-            <!-- UPDATED bunny SVG: ears grouped so inner ear moves with outer ear -->
-            <svg
-              class="bunny"
-              id="bunnySvg"
-              viewBox="0 0 400 400"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <!-- Back leg -->
-              <ellipse cx="280" cy="320" rx="35" ry="50" fill="#7A5C3A"/>
+<svg
+  class="bunny"
+  id="bunnySvg"
+  viewBox="0 0 400 400"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  <!-- Back leg -->
+  <ellipse id="legBack" class="leg" cx="280" cy="320" rx="35" ry="50" fill="#7A5C3A"/>
 
-              <!-- Body -->
-              <ellipse cx="220" cy="260" rx="100" ry="80" fill="#8B6F47"/>
+  <!-- Body -->
+  <ellipse cx="220" cy="260" rx="100" ry="80" fill="#8B6F47"/>
 
-              <!-- Chest (lighter) -->
-              <ellipse cx="180" cy="270" rx="45" ry="50" fill="#A0826D" opacity="0.6"/>
+  <!-- Chest (lighter) -->
+  <ellipse cx="180" cy="270" rx="45" ry="50" fill="#A0826D" opacity="0.6"/>
 
-              <!-- Tail -->
-              <circle cx="310" cy="270" r="28" fill="#8B6F47"/>
-              <circle cx="310" cy="270" r="20" fill="#D4C4B0" opacity="0.8"/>
+  <!-- Tail -->
+  <circle cx="310" cy="270" r="28" fill="#8B6F47"/>
+  <circle cx="310" cy="270" r="20" fill="#D4C4B0" opacity="0.8"/>
 
-              <!-- Neck -->
-              <ellipse cx="150" cy="220" rx="40" ry="50" fill="#8B6F47"/>
+  <!-- Neck -->
+  <ellipse cx="150" cy="220" rx="40" ry="50" fill="#8B6F47"/>
 
-              <!-- Head -->
-              <ellipse cx="120" cy="180" rx="55" ry="60" fill="#8B6F47"/>
+  <!-- Near ear group -->
+  <g class="earPath earPath--right">
+    <ellipse
+      cx="135" cy="150" rx="25" ry="65"
+      fill="#8B6F47"
+      transform="rotate(15 135 150)"
+    />
+    <ellipse
+      cx="135" cy="150" rx="18" ry="52"
+      fill="#A0826D"
+      transform="rotate(15 135 150)"
+    />
+  </g>
 
-              <!-- Cheek -->
-              <ellipse cx="100" cy="195" rx="25" ry="30" fill="#A0826D" opacity="0.7"/>
+  <!-- Head -->
+  <ellipse cx="120" cy="180" rx="55" ry="60" fill="#8B6F47"/>
 
-              <!-- EARS (lowered together) -->
-              <g id="ears" transform="translate(0 14)">
-                <!-- Near ear group: outer + inner move together -->
-                <g class="earPath earPath--right">
-                  <ellipse
-                    cx="135" cy="150" rx="25" ry="65"
-                    fill="#8B6F47"
-                    transform="rotate(15 135 150)"
-                  />
-                  <ellipse
-                    cx="135" cy="150" rx="18" ry="52"
-                    fill="#A0826D"
-                    transform="rotate(15 135 150)"
-                  />
-                </g>
+  <!-- Cheek -->
+  <ellipse cx="100" cy="195" rx="25" ry="30" fill="#A0826D" opacity="0.7"/>
 
-                <!-- Far ear (no opacity now) -->
-                <g class="earPath earPath--left">
-                  <ellipse
-                    cx="115" cy="145" rx="20" ry="55"
-                    fill="#7A5C3A"
-                    transform="rotate(-10 115 145)"
-                  />
-                </g>
-              </g>
+  <!-- Far ear -->
+  <g id="ears" transform="translate(0 -25)">
+    <g class="earPath earPath--left">
+      <ellipse
+        cx="125" cy="145" rx="20" ry="55"
+        fill="#7A5C3A"
+        transform="rotate(-10 115 145)"
+      />
+    </g>
+  </g>
 
-              <!-- Eye -->
-              <circle cx="105" cy="175" r="9" fill="#3B2614"/>
-              <circle cx="107" cy="173" r="3" fill="#FFFFFF"/>
+  <!-- Eye -->
+  <circle cx="105" cy="175" r="9" fill="#3B2614"/>
+  <circle cx="107" cy="173" r="3" fill="#FFFFFF"/>
 
-              <!-- Nose -->
-              <ellipse cx="75" cy="190" rx="8" ry="10" fill="#6B5544"/>
+  <!-- Nose (we'll twitch by rx/ry, not transforms) -->
+  <ellipse id="nose" cx="75" cy="190" rx="8" ry="10" fill="#6B5544"/>
 
-              <!-- Mouth -->
-              <path d="M 75 200 Q 80 205 85 203" stroke="#6B5544" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Mouth -->
+  <path d="M 75 200 Q 80 205 85 203" stroke="#6B5544" stroke-width="2" fill="none" stroke-linecap="round"/>
 
-              <!-- Front leg (far) -->
-              <ellipse cx="165" cy="320" rx="22" ry="45" fill="#7A5C3A"/>
+  <!-- Front leg (far) -->
+  <ellipse id="legFrontFar" class="leg" cx="165" cy="320" rx="22" ry="45" fill="#7A5C3A"/>
 
-              <!-- Front leg (near) -->
-              <ellipse cx="190" cy="325" rx="24" ry="48" fill="#8B6F47"/>
+  <!-- Front leg (near) -->
+  <ellipse id="legFrontNear" class="leg" cx="190" cy="325" rx="24" ry="48" fill="#8B6F47"/>
 
-              <!-- Front paw pad (near) -->
-              <ellipse cx="190" cy="345" rx="15" ry="20" fill="#A0826D"/>
+  <!-- Front paw pad (near) -->
+  <ellipse cx="190" cy="345" rx="15" ry="20" fill="#A0826D"/>
 
-              <!-- Back paw -->
-              <ellipse cx="285" cy="345" rx="40" ry="25" fill="#8B6F47"/>
-              <ellipse cx="285" cy="345" rx="30" ry="18" fill="#A0826D"/>
+  <!-- Back paw -->
+  <ellipse cx="285" cy="345" rx="40" ry="25" fill="#8B6F47"/>
+  <ellipse cx="285" cy="345" rx="30" ry="18" fill="#A0826D"/>
 
-              <!-- Whiskers -->
-              <line x1="75" y1="185" x2="35" y2="178" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
-              <line x1="75" y1="190" x2="30" y2="190" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
-              <line x1="75" y1="195" x2="35" y2="202" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
-            </svg>
+  <!-- Whiskers -->
+  <line x1="75" y1="185" x2="35" y2="178" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
+  <line x1="75" y1="190" x2="30" y2="190" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
+  <line x1="75" y1="195" x2="35" y2="202" stroke="#6B5544" stroke-width="1.5" opacity="0.6"/>
+</svg>
+
 
             <!-- Objects -->
             <button class="obj hay" id="hay" type="button" aria-label="A loose piece of hay"></button>
@@ -192,7 +192,7 @@
         </section>
 
         <!-- Captions -->
-        <section class="captionArea" aria-label="Captions">
+        <section class="captionArea" id="captionArea" aria-label="Captions">
           <div class="captionKicker" id="captionKicker">—</div>
           <div class="caption" id="caption">Scroll to begin.</div>
           <div class="captionSmall" id="captionSmall"></div>

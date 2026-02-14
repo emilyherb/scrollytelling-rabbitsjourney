@@ -1,17 +1,16 @@
 /**
- * Focal Bunny + Captions (GSAP)
- * Fixes:
- * - inner ear moves with ear (ears are grouped)
- * - title ears brown via CSS vars
- * - hay only visible in First Contact
- * - bowl moved right + visible; bunny flips to “find it”
- * - system section captions slowed down
+ * Fixes requested:
+ * - Nose twitch no longer flies off (use rx/ry attr instead of transforms)
+ * - Subtle ears + nose motion throughout entire story (idle loops)
+ * - Hide run slower
+ * - Legs animate while running off-screen
  */
 
 const frame = document.getElementById("frame");
 const light = document.getElementById("light");
 const titleOverlay = document.getElementById("titleOverlay");
 
+const captionArea = document.getElementById("captionArea");
 const captionKicker = document.getElementById("captionKicker");
 const caption = document.getElementById("caption");
 const captionSmall = document.getElementById("captionSmall");
@@ -24,22 +23,24 @@ const soundbar = document.getElementById("soundbar");
 const soundRow = document.getElementById("soundRow");
 
 const bunnySvg = document.getElementById("bunnySvg");
+const nose = document.getElementById("nose");
 
-// Ears are GROUPS now
+// Legs (ids added in SVG)
+const legBack = document.getElementById("legBack");
+const legFrontNear = document.getElementById("legFrontNear");
+const legFrontFar = document.getElementById("legFrontFar");
+
+// Ears are groups
 const earLeft = document.querySelector(".earPath--left");
 const earRight = document.querySelector(".earPath--right");
 
 // Callouts
 const callouts = document.getElementById("callouts");
-
-// variable callouts
 const cHunger = document.getElementById("cHunger");
 const cEnergy = document.getElementById("cEnergy");
 const cMood = document.getElementById("cMood");
 const cSafety = document.getElementById("cSafety");
 const variableCallouts = [cHunger, cEnergy, cMood, cSafety];
-
-// conditional callouts (buttons)
 const conditionalButtons = Array.from(callouts.querySelectorAll("button[data-stimulus]"));
 
 // spans for values
@@ -48,7 +49,6 @@ const energyVal = document.getElementById("energyVal");
 const moodVal = document.getElementById("moodVal");
 
 // -------------------------
-// Story data
 const SCENES = {
   0: { kicker: "Title", line: "The Bunny’s Journey", small: "Scroll to begin.", mode: "title" },
   1: { kicker: "Arrival", line: "I didn’t move at first. I waited to see what the world would do.", small: "Everything smelled different. I listened.", mode: "arrival" },
@@ -63,7 +63,7 @@ const SCENES = {
 };
 
 // -------------------------
-// Variables (internal states)
+// Variables
 let hunger = 0;
 let energy = 50;
 let mood = "curious";
@@ -82,34 +82,31 @@ function renderState() {
 }
 
 // -------------------------
-// localStorage (memory)
 const KEY = "bunnyPOV_memory_v1";
 function getMem() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; } }
 function setMem(patch) { const next = { ...getMem(), ...patch }; localStorage.setItem(KEY, JSON.stringify(next)); return next; }
 
 // -------------------------
-// Light movement
 function setLightProgress(t) {
   const x = Math.round((t - 0.5) * 180);
   light.style.setProperty("--light-x", `${x}px`);
 }
 
 // -------------------------
-// Show/hide helpers
 function show(el, on) {
   el.style.opacity = on ? "1" : "0";
   el.style.transform = on ? "translateY(0px)" : "translateY(8px)";
 }
 function setObjVisible(el, on) { el.style.opacity = on ? "1" : "0"; }
 
-// Hay only in First Contact
 function showHay(on) {
   hay.style.opacity = on ? "1" : "0";
   hay.style.pointerEvents = on ? "auto" : "none";
+  if (!on) hay.style.transform = "translateX(0px)";
 }
 
 // -------------------------
-// Caption animations (GSAP)
+// Captions
 function animateCaptionChange({ kicker, line, small }, style = "fadeUp") {
   gsap.killTweensOf([captionKicker, caption, captionSmall]);
 
@@ -131,40 +128,21 @@ function animateCaptionChange({ kicker, line, small }, style = "fadeUp") {
   const targets = [captionKicker, caption, captionSmall];
 
   if (style === "swipe") {
-    tl.fromTo(
-      targets,
-      { opacity: 0, x: -40, y: 0 },
-      { opacity: 1, x: 0, y: 0, duration: 0.38, ease: "power2.out", stagger: 0.05 }
-    );
+    tl.fromTo(targets, { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.38, ease: "power2.out", stagger: 0.05 });
   } else if (style === "softPop") {
-    tl.fromTo(
-      targets,
-      { opacity: 0, y: 10, scale: 0.985 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "power2.out", stagger: 0.05 }
-    );
+    tl.fromTo(targets, { opacity: 0, y: 10, scale: 0.985 }, { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "power2.out", stagger: 0.05 });
   } else if (style === "jitter") {
-    tl.fromTo(
-      targets,
-      { opacity: 0, y: 0, x: 0 },
-      { opacity: 1, duration: 0.22, ease: "power2.out", stagger: 0.04 }
-    ).to(
-      caption,
-      { x: -3, duration: 0.06, yoyo: true, repeat: 5, ease: "sine.inOut" },
-      "<"
-    );
+    tl.fromTo(targets, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power2.out", stagger: 0.04 })
+      .to(caption, { x: -3, duration: 0.06, yoyo: true, repeat: 5, ease: "sine.inOut" }, "<");
   } else {
-    tl.fromTo(
-      targets,
-      { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: 0.40, ease: "power2.out", stagger: 0.05 }
-    );
+    tl.fromTo(targets, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.40, ease: "power2.out", stagger: 0.05 });
   }
 
   return tl;
 }
 
 // -------------------------
-// Callout animations
+// Callouts
 function hideAllCallouts() {
   gsap.to(callouts.querySelectorAll(".callout"), {
     opacity: 0,
@@ -178,73 +156,145 @@ function showCallouts(targets) {
   hideAllCallouts();
   gsap.fromTo(
     targets,
-    {
-      opacity: 0,
-      y: () => gsap.utils.random(10, 24),
-      x: () => gsap.utils.random(-18, 18),
-      rotate: () => gsap.utils.random(-2, 2),
-    },
-    {
-      opacity: 1,
-      y: 0,
-      x: 0,
-      rotate: 0,
-      duration: 0.55,
-      ease: "power2.out",
-      stagger: 0.08,
-      overwrite: true,
-    }
+    { opacity: 0, y: () => gsap.utils.random(10, 24), x: () => gsap.utils.random(-18, 18), rotate: () => gsap.utils.random(-2, 2) },
+    { opacity: 1, y: 0, x: 0, rotate: 0, duration: 0.55, ease: "power2.out", stagger: 0.08, overwrite: true }
   );
 }
 
-// Floating drift for variable callouts
 function floatCallouts(targets) {
   targets.forEach((t, i) => {
-    gsap.to(t, {
-      y: "+=6",
-      duration: 2.2 + i * 0.25,
-      yoyo: true,
-      repeat: -1,
-      ease: "sine.inOut",
-    });
+    gsap.to(t, { y: "+=6", duration: 2.2 + i * 0.25, yoyo: true, repeat: -1, ease: "sine.inOut" });
   });
 }
 floatCallouts(variableCallouts);
 
 // -------------------------
-// GSAP baseline bunny animations
+// Bunny baseline
 gsap.set(bunnySvg, { transformOrigin: "50% 80%" });
 
-// subtle breathing loop
+// Make SVG element transforms behave consistently (esp. for groups)
+[earLeft, earRight, legBack, legFrontNear, legFrontFar].forEach((el) => {
+  if (!el) return;
+  // helps SVG transforms use the element’s box
+  el.style.transformBox = "fill-box";
+  el.style.transformOrigin = "center";
+});
+
+// breathing
 gsap.to(bunnySvg, { y: 2, duration: 1.6, yoyo: true, repeat: -1, ease: "sine.inOut" });
 
-// micro ear idle (groups now)
+/**
+ * Always-on subtle ear sway (whole story)
+ * (Tiny movement so it reads as “alive,” not “wiggly”)
+ */
 gsap.to([earLeft, earRight], {
-  rotate: 0.6,
-  duration: 2.4,
+  rotate: 0.45,
+  duration: 2.6,
   yoyo: true,
   repeat: -1,
   ease: "sine.inOut",
-  transformOrigin: "120px 170px", // approx “ear base” area in the SVG
 });
+
+/**
+ * Always-on subtle nose twitch (whole story)
+ * Uses attr changes so it NEVER drifts.
+ */
+if (nose) {
+  gsap.to(nose, {
+    attr: { rx: 8.6, ry: 9.4 },
+    duration: 0.10,
+    yoyo: true,
+    repeat: -1,
+    repeatDelay: 2.2,
+    ease: "sine.inOut",
+  });
+}
+
+// Arrival: fade-in + slightly “more noticeable” ear/nose moment
+function playArrival() {
+  gsap.killTweensOf([bunnySvg, earLeft, earRight]);
+
+  gsap.fromTo(
+    bunnySvg,
+    { opacity: 0, y: 10 },
+    { opacity: 1, y: 0, duration: 0.95, ease: "power2.out" }
+  );
+
+  gsap.timeline()
+    .to(earRight, { rotate: -4, duration: 0.16, ease: "power2.out" }, 0.28)
+    .to(earRight, { rotate: 0, duration: 0.20, ease: "sine.out" })
+    .to(earLeft, { rotate: 3, duration: 0.14, ease: "power2.out" }, 0.48)
+    .to(earLeft, { rotate: 0, duration: 0.20, ease: "sine.out" });
+
+  // a tiny extra nose “sniff” on arrival via attr (not transform)
+  if (nose) {
+    gsap.timeline()
+      .to(nose, { attr: { rx: 9.0, ry: 9.2 }, duration: 0.08, ease: "power2.out" }, 0.55)
+      .to(nose, { attr: { rx: 8.0, ry: 10.0 }, duration: 0.12, ease: "sine.out" });
+  }
+}
 
 // Reactions
 function reactEarPop() {
   gsap.killTweensOf([earRight, bunnySvg]);
   gsap.timeline()
     .to(bunnySvg, { y: -6, duration: 0.25, ease: "power2.out" }, 0)
-    .to(earRight, { rotate: -10, y: -6, duration: 0.32, ease: "power2.out", transformOrigin: "120px 170px" }, 0)
-    .to(earRight, { rotate: -4, y: -3, duration: 0.28, ease: "power2.out" })
+    .to(earRight, { rotate: -9, y: -4, duration: 0.28, ease: "power2.out" }, 0)
+    .to(earRight, { rotate: -3, y: -2, duration: 0.26, ease: "power2.out" })
     .to(bunnySvg, { y: 0, duration: 0.35, ease: "sine.out" }, "<");
 }
 
-function reactHide() {
+/**
+ * Cute leg-run cycle while escaping
+ */
+let runLegTween = null;
+function startLegRun() {
+  stopLegRun();
+  const legs = [legFrontNear, legFrontFar, legBack].filter(Boolean);
+
+  // alternate little rotations (subtle, cartoony)
+  runLegTween = gsap.timeline({ repeat: -1 });
+  runLegTween
+    .to(legFrontNear, { rotate: 10, duration: 0.10, ease: "sine.inOut" }, 0)
+    .to(legFrontFar, { rotate: -8, duration: 0.10, ease: "sine.inOut" }, 0)
+    .to(legBack, { rotate: 6, duration: 0.10, ease: "sine.inOut" }, 0)
+    .to(legFrontNear, { rotate: -8, duration: 0.10, ease: "sine.inOut" })
+    .to(legFrontFar, { rotate: 10, duration: 0.10, ease: "sine.inOut" }, "<")
+    .to(legBack, { rotate: -6, duration: 0.10, ease: "sine.inOut" }, "<");
+}
+
+function stopLegRun() {
+  if (runLegTween) {
+    runLegTween.kill();
+    runLegTween = null;
+  }
+  // reset legs
+  [legFrontNear, legFrontFar, legBack].forEach((l) => l && gsap.set(l, { rotate: 0 }));
+}
+
+/**
+ * Hide run: slower + smoother + legs move
+ */
+function reactRunAway() {
   gsap.killTweensOf([bunnySvg, earLeft, earRight]);
-  gsap.timeline()
-    .to(bunnySvg, { x: -18, y: 10, scale: 0.98, duration: 0.35, ease: "power2.out" }, 0)
-    .to([earLeft, earRight], { rotate: 6, duration: 0.25, ease: "power2.out", transformOrigin: "120px 170px" }, 0.05)
-    .to(bunnySvg, { x: -10, y: 6, duration: 0.45, ease: "sine.inOut" })
-    .to(bunnySvg, { x: 0, y: 0, scale: 1, duration: 0.55, ease: "sine.out" });
+  startLegRun();
+
+  const tl = gsap.timeline({
+    onComplete: () => stopLegRun(),
+  });
+
+  tl.to([earLeft, earRight], { rotate: 6, duration: 0.16, ease: "power2.out" }, 0)
+    // off-screen left (slower than before)
+    .to(bunnySvg, { x: -650, duration: 0.62, ease: "power2.in" }, 0)
+    // teleport to right edge
+    .set(bunnySvg, { x: 650 }, 0.64)
+    // return from right (slower + cushy ease)
+    .to(bunnySvg, { x: 0, duration: 0.78, ease: "power2.out" }, 0.66)
+    .to([earLeft, earRight], { rotate: 0, duration: 0.35, ease: "sine.out" }, 0.90);
+}
+
+function reactNeutral() {
+  gsap.to(bunnySvg, { y: -5, duration: 0.22, yoyo: true, repeat: 1, ease: "sine.inOut" });
 }
 
 // -------------------------
@@ -252,7 +302,7 @@ function reactHide() {
 let nudges = 0;
 hay.addEventListener("click", () => {
   nudges++;
-  const dx = Math.min(160, nudges * 60);
+  const dx = Math.min(180, nudges * 70);
   hay.style.transform = `translateX(${dx}px)`;
   console.log("[First Contact] hay moved:", dx);
   setMem({ nudges });
@@ -262,7 +312,9 @@ hay.addEventListener("click", () => {
 });
 
 // -------------------------
-// Conditionals: click conditional callouts
+// Conditionals
+let activeStep = 0;
+
 conditionalButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const stim = btn.dataset.stimulus;
@@ -290,12 +342,14 @@ function applyDecision({ type, extra }) {
   captionSmall.textContent = extra;
 
   if (type === "safe") reactEarPop();
-  else if (type === "danger") reactHide();
-  else gsap.to(bunnySvg, { y: -5, duration: 0.22, yoyo: true, repeat: 1, ease: "sine.inOut" });
+  else if (type === "danger") {
+    if (activeStep === 4) reactRunAway();
+    else reactNeutral();
+  } else reactNeutral();
 }
 
 // -------------------------
-// Listening: timed events (some missed)
+// Listening
 let listeningTimer = null;
 
 function startListening() {
@@ -327,7 +381,7 @@ function stopListening() {
 }
 
 // -------------------------
-// Mistake: gentle fail + recover
+// Mistake
 function playMistake() {
   captionSmall.textContent = "I pause. I breathe. I try again.";
 
@@ -343,38 +397,34 @@ function playMistake() {
 }
 
 // -------------------------
-// System: bowl beat (slower + flip moment)
+// System bowl beat (slow)
 function playSystemBowlBeat() {
   setObjVisible(bowl, true);
   bowl.style.transform = "translateX(0px)";
 
-  // Beat 1: notice the change (slower)
   setTimeout(() => {
     bowl.style.transform = "translateX(-44px)";
     captionSmall.textContent = "The bowl moved. My stomach drops.";
-    // quick alert body
     gsap.to(bunnySvg, { y: -6, duration: 0.22, yoyo: true, repeat: 1, ease: "power2.out" });
-  }, 1200);
+  }, 1400);
 
-  // Beat 2: search + flip around
   setTimeout(() => {
     captionSmall.textContent = "I turn. I scan. I look again.";
     gsap.timeline()
-      .to(bunnySvg, { scaleX: -1, duration: 0.35, ease: "power2.out" })   // flip
-      .to(bunnySvg, { x: 10, duration: 0.35, ease: "sine.inOut" }, "<")   // small “step”
+      .to(bunnySvg, { scaleX: -1, duration: 0.35, ease: "power2.out" })
+      .to(bunnySvg, { x: 10, duration: 0.35, ease: "sine.inOut" }, "<")
       .to(bunnySvg, { x: 0, duration: 0.35, ease: "sine.out" });
-  }, 2600);
+  }, 3100);
 
-  // Beat 3: relief (slow)
   setTimeout(() => {
     bowl.style.transform = "translateX(0px)";
     captionSmall.textContent = "Found it. The system settles.";
-    gsap.to(bunnySvg, { scaleX: 1, duration: 0.35, ease: "power2.out" }); // face forward again
-  }, 4300);
+    gsap.to(bunnySvg, { scaleX: 1, duration: 0.35, ease: "power2.out" });
+  }, 5200);
 }
 
 // -------------------------
-// Scene activation per step
+// Scene activation
 function applyMode(step) {
   const s = SCENES[step];
   if (!s) return;
@@ -403,11 +453,12 @@ function applyMode(step) {
   setObjVisible(bowl, false);
   setObjVisible(box, false);
   stopListening();
-
-  // Always hide hay unless First Contact
   showHay(false);
 
-  // Title-only view
+  // Stop any run leg cycle if user scrolls mid-run
+  stopLegRun();
+
+  // Title-only
   if (step === 0) {
     frame.classList.add("is-title");
     titleOverlay.classList.remove("is-gone");
@@ -417,10 +468,11 @@ function applyMode(step) {
     titleOverlay.classList.add("is-gone");
   }
 
-  // Stage differences
+  // light
   const lightByStep = { 1: 0.45, 2: 0.55, 3: 0.60, 4: 0.50, 5: 0.52, 6: 0.62, 7: 0.58, 8: 0.48, 9: 0.66 };
   setLightProgress(lightByStep[step] ?? 0.55);
 
+  // camera
   const camera = {
     1: { scale: 1.02, y: 0 },
     2: { scale: 1.04, y: -2 },
@@ -436,7 +488,12 @@ function applyMode(step) {
   gsap.to(bunnySvg, { scale: camera.scale, duration: 0.6, ease: "power2.out", overwrite: true });
   gsap.to(bunnySvg, { y: camera.y, duration: 0.6, ease: "power2.out", overwrite: true });
 
-  // Per-mode
+  // Mode behaviors
+  if (s.mode === "arrival") {
+    playArrival();
+    return;
+  }
+
   if (s.mode === "firstContact") {
     showHay(true);
     return;
@@ -483,7 +540,6 @@ function applyMode(step) {
 // -------------------------
 // Scroll driver
 const steps = Array.from(document.querySelectorAll(".step"));
-let activeStep = 0;
 
 const io = new IntersectionObserver(
   (entries) => {
@@ -506,7 +562,7 @@ const io = new IntersectionObserver(
 
 steps.forEach((s) => io.observe(s));
 
-// Per-step progress effects (opening light + naming cycle)
+// progress helpers
 function getProgress(el) {
   const r = el.getBoundingClientRect();
   const vh = window.innerHeight;

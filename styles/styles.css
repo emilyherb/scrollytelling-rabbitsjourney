@@ -1,0 +1,482 @@
+/* ─── Design Tokens ──────────────────────────────────────────────────── */
+
+/* Primitive colors */
+.mode-1 {
+  --grey-00: #ffffff;
+  --grey-10: #f1f1f1;
+  --grey-20: #ebe3de;
+  --grey-90: #2b2b2b;
+  --orange-50: #d89a7f;
+  --green-50: #006c3f;
+}
+
+/* Brand colors — light mode */
+.light {
+  --secondary-00: var(--grey-00);
+  --primary-10: var(--grey-10);
+  --primary-20: var(--grey-20);
+  --accent-50: var(--orange-50);
+  --tertiary-50: var(--green-50);
+  --secondary-90: var(--grey-90);
+}
+
+/* Brand colors — dark mode */
+.dark {
+  --secondary-00: var(--grey-00);
+  --primary-10: var(--grey-90);
+  --primary-20: var(--grey-20);
+  --accent-50: var(--orange-50);
+  --tertiary-50: var(--green-50);
+  --secondary-90: var(--grey-10);
+}
+
+/* Typography */
+.mode-1 {
+  --text-size-s:    16px;
+  --text-size-m:    24px;
+  --text-size-l:    32px;
+  --text-size-xl:   40px;
+  --text-size-xxxl: 96px;
+
+  --font-weight-default: 400;
+  --font-weight-medium:  500;
+  --font-weight-heavy:   700;
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-body:    "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+/* Spacing */
+.mode-1 {
+  --xs:   8px;
+  --s:    16px;
+  --m:    24px;
+  --l:    32px;
+  --xl:   40px;
+  --xxl:  56px;
+  --xxxl: 72px;
+}
+
+/* Component tokens (derived) */
+.mode-1 {
+  --radius: 22px;
+  --shadow: 0 18px 60px rgba(0,0,0,.10);
+  --muted:  rgba(43,43,43,.70);
+
+  /* Bunny-specific */
+  --bunny-brown: #8B6F47;
+  --bunny-dark:  #7A5C3A;
+  --bunny-inner: #A0826D;
+}
+
+
+/* ─── Reset & Base ───────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background:  var(--primary-20);
+  color:       var(--secondary-90);
+  font-family: var(--font-body);
+}
+
+
+/* ─── Layout ─────────────────────────────────────────────────────────── */
+
+.stage {
+  min-height: 100vh;
+  position: relative;
+}
+
+.frame {
+  position:  sticky;
+  top:       0;
+  height:    100vh;
+  padding:   var(--s);
+  display:   grid;
+  place-items: center;
+}
+
+.frame::before {
+  content: "";
+  position:      absolute;
+  inset:         14px;
+  border-radius: var(--radius);
+  background:    rgba(241,241,241,.70);
+  border:        1px solid rgba(0,0,0,.07);
+  box-shadow:    var(--shadow);
+}
+
+
+/* ─── Background / Atmosphere ────────────────────────────────────────── */
+
+.bg {
+  position:      absolute;
+  inset:         14px;
+  border-radius: var(--radius);
+  overflow:      hidden;
+  pointer-events: none;
+}
+
+.light {
+  position:   absolute;
+  inset:      -30%;
+  background: radial-gradient(520px 420px at 20% 20%, rgba(216,154,127,.35), rgba(216,154,127,0));
+  transform:  translateX(var(--light-x, 0px));
+  transition: transform 700ms ease;
+}
+
+.dust {
+  position: absolute;
+  inset:    0;
+  background-image:
+    radial-gradient(rgba(0,0,0,.05) 1px, transparent 1px),
+    radial-gradient(rgba(0,0,0,.035) 1px, transparent 1px);
+  background-size:     120px 120px, 170px 170px;
+  background-position: 0 0, 50px 60px;
+  opacity:   .25;
+  animation: drift 10s linear infinite;
+}
+
+@keyframes drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(70px); }
+}
+
+
+/* ─── Scene ──────────────────────────────────────────────────────────── */
+
+.scene {
+  position:      relative;
+  z-index:       2;
+  width:         min(900px, 92vw);
+  display:       grid;
+  justify-items: center;
+  padding-top:   var(--xxxl);
+}
+
+.bunnyWrap {
+  position:     relative;
+  width:        min(520px, 76vw);
+  aspect-ratio: 1.2 / 1;
+  display:      grid;
+  place-items:  center;
+}
+
+/* Hide bunny + caption on title frame */
+.frame.is-title .scene          { visibility: hidden; opacity: 0; }
+.frame.is-title #captionArea    { opacity: 0; pointer-events: none; }
+
+
+/* ─── Bunny ───────────────────────────────────────────────────────────── */
+
+.bunny {
+  width:          100%;
+  height:         auto;
+  filter:         drop-shadow(0 18px 28px rgba(0,0,0,.12));
+  transform-origin: 50% 80%;
+}
+
+
+/* ─── Scene Objects ──────────────────────────────────────────────────── */
+
+.obj {
+  position:   absolute;
+  border:     none;
+  background: transparent;
+  padding:    0;
+}
+
+.hay {
+  width:         62px;
+  height:        18px;
+  border-radius: 999px;
+  background:    var(--tertiary-50);
+  left:          16%;
+  bottom:        26%;
+  z-index:       8;
+  box-shadow:    0 12px 18px rgba(0,0,0,.10);
+  cursor:        pointer;
+  transition:    transform 420ms ease, opacity 300ms ease;
+  opacity:       0;
+  pointer-events: none;
+}
+
+.bowl {
+  width:         64px;
+  height:        30px;
+  border-radius: 0 0 999px 999px;
+  background:    rgba(0,0,0,.14);
+  left:          86%;
+  bottom:        22%;
+  opacity:       0;
+  z-index:       6;
+  box-shadow:    0 14px 24px rgba(0,0,0,.10);
+  transition:    opacity 500ms ease, transform 650ms ease;
+}
+
+.box {
+  width:         96px;
+  height:        72px;
+  border-radius: var(--s);
+  background:    rgba(0,0,0,.08);
+  left:          70%;
+  bottom:        14%;
+  opacity:       0;
+  transform:     translateY(10px);
+  transition:    opacity 600ms ease, transform 600ms ease;
+}
+
+
+/* ─── Callouts ───────────────────────────────────────────────────────── */
+
+.callouts {
+  position:      absolute;
+  inset:         14px;
+  border-radius: var(--radius);
+  z-index:       7;
+  pointer-events: none;
+}
+
+.callout {
+  position:  absolute;
+  left:      var(--x);
+  top:       var(--y);
+  transform: translate(-50%, -50%);
+  display:   flex;
+  align-items: center;
+  gap:       var(--xs);
+
+  padding:       var(--xs) var(--s);
+  border-radius: 999px;
+  background:    rgba(241,241,241,.78);
+  border:        1px solid rgba(0,0,0,.07);
+  backdrop-filter: blur(10px);
+
+  opacity:     0;
+  filter:      drop-shadow(0 14px 24px rgba(0,0,0,.10));
+  will-change: transform, opacity;
+}
+
+.callout__tag {
+  font-size:      12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color:          rgba(0,0,0,.55);
+}
+
+.callout__text {
+  font-size:   13px;
+  color:       rgba(0,0,0,.80);
+  font-family: var(--font-body);
+}
+
+.callout--const {
+  background:   rgba(216,154,127,.18);
+  border-color: rgba(216,154,127,.35);
+}
+
+.callout--if,
+.callout--else {
+  cursor:         pointer;
+  pointer-events: auto;
+  text-align:     left;
+}
+
+.callout--else {
+  background:   rgba(216,154,127,.18);
+  border-color: rgba(216,154,127,.35);
+}
+
+
+/* ─── Caption Area ───────────────────────────────────────────────────── */
+
+.captionArea {
+  position:       relative;
+  z-index:        2;
+  width:          min(900px, 92vw);
+  margin-top:     var(--s);
+  padding:        var(--s) var(--s) var(--m);
+  border-radius:  var(--s);
+  background:     rgba(241,241,241,.70);
+  border:         1px solid rgba(0,0,0,.07);
+  backdrop-filter: blur(10px);
+  overflow:       hidden;
+  transition:     opacity 300ms ease;
+}
+
+.captionKicker {
+  font-size:      12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color:          var(--muted);
+  margin-bottom:  var(--xs);
+}
+
+.caption {
+  font-family: var(--font-display);
+  font-size:   clamp(var(--text-size-m), 3.2vw, var(--text-size-l));
+  line-height: 1.15;
+  color:       rgba(0,0,0,.88);
+}
+
+.captionSmall {
+  margin-top: var(--s);
+  color:      var(--muted);
+  font-size:  14px;
+  max-width:  70ch;
+}
+
+.caption,
+.captionSmall,
+.captionKicker { will-change: transform, opacity; }
+
+
+/* ─── Sound Bar ──────────────────────────────────────────────────────── */
+
+.soundbar {
+  position:       absolute;
+  z-index:        9;
+  left:           var(--s);
+  right:          var(--s);
+  bottom:         var(--s);
+  padding:        var(--s);
+  border-radius:  var(--s);
+  background:     rgba(241,241,241,.78);
+  border:         1px solid rgba(0,0,0,.07);
+  backdrop-filter: blur(10px);
+  opacity:        0;
+  transform:      translateY(8px);
+  transition:     opacity 500ms ease, transform 500ms ease;
+}
+
+.soundbar__label {
+  font-size:     12px;
+  color:         var(--muted);
+  margin-bottom: var(--xs);
+}
+
+.soundbar__row {
+  display:    flex;
+  gap:        6px;
+  align-items: center;
+  min-height: 18px;
+}
+
+.pulse {
+  width:         12px;
+  height:        12px;
+  border-radius: 999px;
+  background:    rgba(0,0,0,.15);
+}
+
+.pulse--caught  { background: rgba(216,154,127,.9); }
+.pulse--missed  { opacity: .55; }
+
+
+/* ─── Title Overlay ──────────────────────────────────────────────────── */
+
+.title {
+  position:      absolute;
+  inset:         14px;
+  border-radius: var(--radius);
+  z-index:       10;
+  display:       grid;
+  place-items:   center;
+  background:    radial-gradient(900px 520px at 50% 30%, rgba(255,255,255,.45), rgba(241,241,241,.78));
+  border:        1px solid rgba(0,0,0,.06);
+  overflow:      hidden;
+  transition:    opacity 700ms ease, transform 700ms ease;
+}
+
+.title.is-gone {
+  opacity:        0;
+  transform:      translateY(-8px);
+  pointer-events: none;
+}
+
+.title__stack {
+  text-align: center;
+  padding:    var(--m);
+  max-width:  760px;
+  z-index:    2;
+}
+
+.title__kicker {
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-size:      12px;
+  color:          var(--muted);
+}
+
+.title__headline {
+  font-family: var(--font-display);
+  font-size:   clamp(var(--text-size-xl), 6vw, var(--text-size-xxxl));
+  line-height: 1.02;
+  margin:      var(--s) 0 var(--xs);
+}
+
+.title__sub {
+  margin:    0 auto;
+  max-width: 56ch;
+  color:     rgba(0,0,0,.75);
+  font-size: var(--text-size-s);
+}
+
+.title__hint {
+  margin-top: var(--s);
+  color:      var(--muted);
+  font-size:  13px;
+}
+
+
+/* ─── Bunny Ears (title decoration) ─────────────────────────────────── */
+
+.ears {
+  position:       absolute;
+  left:           0;
+  right:          0;
+  bottom:         -14px;
+  height:         62%;
+  pointer-events: none;
+  display:        flex;
+  justify-content: space-between;
+  padding:        0 10%;
+  z-index:        1;
+}
+
+.ear {
+  position:        relative;
+  width:           min(220px, 30vw);
+  height:          110%;
+  background:      var(--bunny-brown);
+  box-shadow:      0 18px 40px rgba(0,0,0,.10);
+  transform:       rotate(var(--rot, 0deg)) translateY(var(--ear-y, 0px));
+  transform-origin: 50% 100%;
+  clip-path: polygon(
+    50% 0%,  70% 6%,  88% 20%, 98% 42%, 100% 70%,
+    92% 100%, 8% 100%, 0% 70%, 2% 42%, 12% 20%, 30% 6%
+  );
+  border-radius: 0 0 70px 70px;
+}
+
+.ear::after {
+  content:       "";
+  position:      absolute;
+  inset:         10% 18% 10% 18%;
+  background:    color-mix(in srgb, var(--bunny-inner) 85%, transparent);
+  opacity:       .65;
+  clip-path:     inherit;
+  border-radius: inherit;
+}
+
+.ear--left  { --rot: -10deg; background: var(--bunny-dark); }
+.ear--right { --rot:  10deg; }
+
+
+/* ─── Scroll Track ───────────────────────────────────────────────────── */
+
+.track { height: 1000vh; }
+.step  { height:  100vh; }

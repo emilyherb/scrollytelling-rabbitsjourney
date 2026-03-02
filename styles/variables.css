@@ -1,0 +1,54 @@
+/* .primitive-colors */
+/* Mode: Mode 1 */
+.mode-1 {
+  --grey-00: #ffffff;
+  --grey-10: #f1f1f1;
+  --grey-20: #ebe3de;
+  --grey-90: #2b2b2b;
+  --orange-50: #d89a7f;
+  --green-50: #006c3f;
+}
+/* brand colors */
+/* Mode: light */
+.light {
+  --secondary-00: var(--grey-00);
+  --primary-10: var(--grey-10);
+  --primary-20: var(--grey-20);
+  --accent-50: var(--orange-50);
+  --tertiary-50: var(--green-50);
+  --secondary-90: var(--grey-90);
+}
+/* Mode: dark */
+.dark {
+  --secondary-00: var(--grey-00);
+  --primary-10: var(--grey-90);
+  --primary-20: var(--grey-20);
+  --accent-50: var(--orange-50);
+  --tertiary-50: var(--green-50);
+  --secondary-90: var(--grey-10);
+}
+/* typography */
+/* Mode: Mode 1 */
+.mode-1 {
+  --text-size-font-size-s: 16px;
+  --text-size-font-size-m: 24px;
+  --text-size-font-size-l: 32px;
+  --text-size-font-size-xl: 40px;
+  --text-size-font-size-xxxl: 96px;
+  --text-weight-font-weight-default: "regular";
+  --text-weight-font-weight-heavy: "bold";
+  --text-weight-font-weight-medium: "medium";
+  --font-family-font-family: "Fraunces";
+  --font-family-font-family-body: "Inter";
+}
+/* spacing */
+/* Mode: Mode 1 */
+.mode-1 {
+  --xs: 8px;
+  --s: 16px;
+  --m: 24px;
+  --l: 32px;
+  --xl: 40px;
+  --xxl: 56px;
+  --xxxl: 72px;
+}

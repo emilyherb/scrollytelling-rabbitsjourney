@@ -4,6 +4,7 @@
  * - Subtle ears + nose motion throughout entire story (idle loops)
  * - Hide run slower
  * - Legs animate while running off-screen
+ * - Listening scene removed; steps renumbered
  */
 
 const frame = document.getElementById("frame");
@@ -18,9 +19,6 @@ const captionSmall = document.getElementById("captionSmall");
 const hay = document.getElementById("hay");
 const bowl = document.getElementById("bowl");
 const box = document.getElementById("box");
-
-const soundbar = document.getElementById("soundbar");
-const soundRow = document.getElementById("soundRow");
 
 const bunnySvg = document.getElementById("bunnySvg");
 const nose = document.getElementById("nose");
@@ -49,17 +47,27 @@ const energyVal = document.getElementById("energyVal");
 const moodVal = document.getElementById("moodVal");
 
 // -------------------------
+// Steps renumbered (listening removed — was step 5):
+// 0: Title
+// 1: Arrival
+// 2: First Contact
+// 3: Naming Things
+// 4: The Switch
+// 5: The System     (was 6)
+// 6: The Memory     (was 7)
+// 7: The Mistake    (was 8)
+// 8: Understanding  (was 9)
+
 const SCENES = {
-  0: { kicker: "Title", line: "The Bunny’s Journey", small: "Scroll to begin.", mode: "title" },
-  1: { kicker: "Arrival", line: "I didn’t move at first. I waited to see what the world would do.", small: "Everything smelled different. I listened.", mode: "arrival" },
-  2: { kicker: "First Contact", line: "I pushed something small. A piece of hay. It moved.", small: "Click the hay. Open DevTools → Console.", mode: "firstContact" },
-  3: { kicker: "Naming Things", line: "Some feelings stay. Some change. I started to tell them apart.", small: "States appear as names. Names make them manageable.", mode: "naming" },
-  4: { kicker: "The Switch", line: "Not everything makes me run. But some things do.", small: "Click a conditional. Watch my body decide.", mode: "switch" },
-  5: { kicker: "Listening", line: "The world acts. I listen for what matters.", small: "Some sounds I catch. Some I miss.", mode: "listening" },
-  6: { kicker: "The System", line: "Consistency isn’t boring. It’s why I can rest.", small: "One thing moves — and I notice immediately.", mode: "system" },
-  7: { kicker: "The Memory", line: "I remember what happens next. Even before it happens.", small: "Memory persists… until the world updates.", mode: "memory" },
-  8: { kicker: "The Mistake", line: "I thought I understood. I didn’t. I got stuck.", small: "Mistakes don’t mean I’m broken. I try again.", mode: "mistake" },
-  9: { kicker: "Understanding", line: "When something new arrives, I watch. I test. I learn. Then I rest.", small: "I don’t control everything. I understand enough.", mode: "closing" },
+  0: { kicker: "Title",         line: "The Bunny's Journey",                                                     small: "Scroll to begin.",                                          mode: "title" },
+  1: { kicker: "Arrival",       line: "I didn't move at first. I waited to see what the world would do.",        small: "Everything smelled different. I listened.",                  mode: "arrival" },
+  2: { kicker: "First Contact", line: "I pushed something small. A piece of hay. It moved.",                     small: "Click the hay. Open DevTools → Console.",                   mode: "firstContact" },
+  3: { kicker: "Naming Things", line: "Some feelings stay. Some change. I started to tell them apart.",          small: "States appear as names. Names make them manageable.",        mode: "naming" },
+  4: { kicker: "The Switch",    line: "Not everything makes me run. But some things do.",                        small: "Click a conditional. Watch my body decide.",                mode: "switch" },
+  5: { kicker: "The System",    line: "Consistency isn't boring. It's why I can rest.",                          small: "One thing moves — and I notice immediately.",               mode: "system" },
+  6: { kicker: "The Memory",    line: "I remember what happens next. Even before it happens.",                   small: "Memory persists… until the world updates.",                 mode: "memory" },
+  7: { kicker: "The Mistake",   line: "I thought I understood. I didn't. I got stuck.",                          small: "Mistakes don't mean I'm broken. I try again.",              mode: "mistake" },
+  8: { kicker: "Understanding", line: "When something new arrives, I watch. I test. I learn. Then I rest.",      small: "I don't control everything. I understand enough.",          mode: "closing" },
 };
 
 // -------------------------
@@ -172,10 +180,8 @@ floatCallouts(variableCallouts);
 // Bunny baseline
 gsap.set(bunnySvg, { transformOrigin: "50% 80%" });
 
-// Make SVG element transforms behave consistently (esp. for groups)
 [earLeft, earRight, legBack, legFrontNear, legFrontFar].forEach((el) => {
   if (!el) return;
-  // helps SVG transforms use the element’s box
   el.style.transformBox = "fill-box";
   el.style.transformOrigin = "center";
 });
@@ -183,10 +189,7 @@ gsap.set(bunnySvg, { transformOrigin: "50% 80%" });
 // breathing
 gsap.to(bunnySvg, { y: 2, duration: 1.6, yoyo: true, repeat: -1, ease: "sine.inOut" });
 
-/**
- * Always-on subtle ear sway (whole story)
- * (Tiny movement so it reads as “alive,” not “wiggly”)
- */
+// Always-on subtle ear sway
 gsap.to([earLeft, earRight], {
   rotate: 0.45,
   duration: 2.6,
@@ -195,10 +198,7 @@ gsap.to([earLeft, earRight], {
   ease: "sine.inOut",
 });
 
-/**
- * Always-on subtle nose twitch (whole story)
- * Uses attr changes so it NEVER drifts.
- */
+// Always-on subtle nose twitch
 if (nose) {
   gsap.to(nose, {
     attr: { rx: 8.6, ry: 9.4 },
@@ -210,7 +210,7 @@ if (nose) {
   });
 }
 
-// Arrival: fade-in + slightly “more noticeable” ear/nose moment
+// Arrival
 function playArrival() {
   gsap.killTweensOf([bunnySvg, earLeft, earRight]);
 
@@ -222,11 +222,10 @@ function playArrival() {
 
   gsap.timeline()
     .to(earRight, { rotate: -4, duration: 0.16, ease: "power2.out" }, 0.28)
-    .to(earRight, { rotate: 0, duration: 0.20, ease: "sine.out" })
-    .to(earLeft, { rotate: 3, duration: 0.14, ease: "power2.out" }, 0.48)
-    .to(earLeft, { rotate: 0, duration: 0.20, ease: "sine.out" });
+    .to(earRight, { rotate: 0,  duration: 0.20, ease: "sine.out" })
+    .to(earLeft,  { rotate: 3,  duration: 0.14, ease: "power2.out" }, 0.48)
+    .to(earLeft,  { rotate: 0,  duration: 0.20, ease: "sine.out" });
 
-  // a tiny extra nose “sniff” on arrival via attr (not transform)
   if (nose) {
     gsap.timeline()
       .to(nose, { attr: { rx: 9.0, ry: 9.2 }, duration: 0.08, ease: "power2.out" }, 0.55)
@@ -244,23 +243,18 @@ function reactEarPop() {
     .to(bunnySvg, { y: 0, duration: 0.35, ease: "sine.out" }, "<");
 }
 
-/**
- * Cute leg-run cycle while escaping
- */
 let runLegTween = null;
 function startLegRun() {
   stopLegRun();
-  const legs = [legFrontNear, legFrontFar, legBack].filter(Boolean);
 
-  // alternate little rotations (subtle, cartoony)
   runLegTween = gsap.timeline({ repeat: -1 });
   runLegTween
-    .to(legFrontNear, { rotate: 10, duration: 0.10, ease: "sine.inOut" }, 0)
-    .to(legFrontFar, { rotate: -8, duration: 0.10, ease: "sine.inOut" }, 0)
-    .to(legBack, { rotate: 6, duration: 0.10, ease: "sine.inOut" }, 0)
-    .to(legFrontNear, { rotate: -8, duration: 0.10, ease: "sine.inOut" })
-    .to(legFrontFar, { rotate: 10, duration: 0.10, ease: "sine.inOut" }, "<")
-    .to(legBack, { rotate: -6, duration: 0.10, ease: "sine.inOut" }, "<");
+    .to(legFrontNear, { rotate: 10,  duration: 0.10, ease: "sine.inOut" }, 0)
+    .to(legFrontFar,  { rotate: -8,  duration: 0.10, ease: "sine.inOut" }, 0)
+    .to(legBack,      { rotate: 6,   duration: 0.10, ease: "sine.inOut" }, 0)
+    .to(legFrontNear, { rotate: -8,  duration: 0.10, ease: "sine.inOut" })
+    .to(legFrontFar,  { rotate: 10,  duration: 0.10, ease: "sine.inOut" }, "<")
+    .to(legBack,      { rotate: -6,  duration: 0.10, ease: "sine.inOut" }, "<");
 }
 
 function stopLegRun() {
@@ -268,29 +262,20 @@ function stopLegRun() {
     runLegTween.kill();
     runLegTween = null;
   }
-  // reset legs
   [legFrontNear, legFrontFar, legBack].forEach((l) => l && gsap.set(l, { rotate: 0 }));
 }
 
-/**
- * Hide run: slower + smoother + legs move
- */
 function reactRunAway() {
   gsap.killTweensOf([bunnySvg, earLeft, earRight]);
   startLegRun();
 
-  const tl = gsap.timeline({
-    onComplete: () => stopLegRun(),
-  });
+  const tl = gsap.timeline({ onComplete: () => stopLegRun() });
 
-  tl.to([earLeft, earRight], { rotate: 6, duration: 0.16, ease: "power2.out" }, 0)
-    // off-screen left (slower than before)
-    .to(bunnySvg, { x: -650, duration: 0.62, ease: "power2.in" }, 0)
-    // teleport to right edge
-    .set(bunnySvg, { x: 650 }, 0.64)
-    // return from right (slower + cushy ease)
-    .to(bunnySvg, { x: 0, duration: 0.78, ease: "power2.out" }, 0.66)
-    .to([earLeft, earRight], { rotate: 0, duration: 0.35, ease: "sine.out" }, 0.90);
+  tl.to([earLeft, earRight], { rotate: 6,    duration: 0.16, ease: "power2.out" }, 0)
+    .to(bunnySvg,             { x: -650,      duration: 0.62, ease: "power2.in"  }, 0)
+    .set(bunnySvg,            { x: 650 },                                           0.64)
+    .to(bunnySvg,             { x: 0,         duration: 0.78, ease: "power2.out" }, 0.66)
+    .to([earLeft, earRight],  { rotate: 0,    duration: 0.35, ease: "sine.out"   }, 0.90);
 }
 
 function reactNeutral() {
@@ -308,7 +293,7 @@ hay.addEventListener("click", () => {
   setMem({ nudges });
 
   captionSmall.textContent =
-    nudges === 1 ? "Again. It responds. That wasn’t an accident." : "It happens again — predictable.";
+    nudges === 1 ? "Again. It responds. That wasn't an accident." : "It happens again — predictable.";
 });
 
 // -------------------------
@@ -330,18 +315,18 @@ conditionalButtons.forEach((btn) => {
 });
 
 function decide(stim) {
-  if (stim === "softVoice") return { type: "safe", extra: "A soft voice? Safe." };
-  if (stim === "footsteps") return { type: "neutral", extra: "Footsteps. I listen, but I stay." };
-  if (stim === "doorClose") return { type: "neutral", extra: "A quiet door. Not danger." };
-  if (stim === "loudSharp") return { type: "danger", extra: "A loud sound. I run." };
-  if (stim === "fastShadow") return { type: "danger", extra: "Too fast. I hide." };
+  if (stim === "softVoice")  return { type: "safe",    extra: "A soft voice? Safe." };
+  if (stim === "footsteps")  return { type: "neutral",  extra: "Footsteps. I listen, but I stay." };
+  if (stim === "doorClose")  return { type: "neutral",  extra: "A quiet door. Not danger." };
+  if (stim === "loudSharp")  return { type: "danger",   extra: "A loud sound. I run." };
+  if (stim === "fastShadow") return { type: "danger",   extra: "Too fast. I hide." };
   return { type: "neutral", extra: "I stay." };
 }
 
 function applyDecision({ type, extra }) {
   captionSmall.textContent = extra;
 
-  if (type === "safe") reactEarPop();
+  if (type === "safe")        reactEarPop();
   else if (type === "danger") {
     if (activeStep === 4) reactRunAway();
     else reactNeutral();
@@ -349,55 +334,7 @@ function applyDecision({ type, extra }) {
 }
 
 // -------------------------
-// Listening
-let listeningTimer = null;
-
-function startListening() {
-  stopListening();
-  soundRow.innerHTML = "";
-  listeningTimer = setInterval(() => {
-    const types = ["door", "steps", "bag", "silence"];
-    const t = types[Math.floor(Math.random() * types.length)];
-    const caught = t !== "silence" && Math.random() > 0.35;
-
-    const dot = document.createElement("div");
-    dot.className = "pulse " + (caught ? "pulse--caught" : "pulse--missed");
-    dot.title = caught ? `caught: ${t}` : `missed: ${t}`;
-    soundRow.appendChild(dot);
-    if (soundRow.children.length > 34) soundRow.removeChild(soundRow.firstChild);
-
-    if (caught) {
-      captionSmall.textContent = t === "bag" ? "Food rustles — I come." : "Something happens — I look.";
-      gsap.to(bunnySvg, { y: -6, duration: 0.22, yoyo: true, repeat: 1, ease: "power2.out" });
-    } else {
-      captionSmall.textContent = "Some sounds I miss. I listen for what matters.";
-    }
-  }, 900);
-}
-
-function stopListening() {
-  if (listeningTimer) clearInterval(listeningTimer);
-  listeningTimer = null;
-}
-
-// -------------------------
-// Mistake
-function playMistake() {
-  captionSmall.textContent = "I pause. I breathe. I try again.";
-
-  gsap.timeline()
-    .to(bunnySvg, { y: -18, duration: 0.25, ease: "power2.out" })
-    .to(bunnySvg, { y: 10, duration: 0.22, ease: "power2.in" })
-    .to(bunnySvg, { x: -16, y: 8, scale: 0.98, duration: 0.35, ease: "power2.out" })
-    .to(bunnySvg, { x: 0, y: 0, scale: 1, duration: 0.55, ease: "sine.out" });
-
-  setTimeout(() => {
-    captionSmall.textContent = "Different angle. New attempt.";
-  }, 900);
-}
-
-// -------------------------
-// System bowl beat (slow)
+// System bowl beat
 function playSystemBowlBeat() {
   setObjVisible(bowl, true);
   bowl.style.transform = "translateX(0px)";
@@ -412,8 +349,8 @@ function playSystemBowlBeat() {
     captionSmall.textContent = "I turn. I scan. I look again.";
     gsap.timeline()
       .to(bunnySvg, { scaleX: -1, duration: 0.35, ease: "power2.out" })
-      .to(bunnySvg, { x: 10, duration: 0.35, ease: "sine.inOut" }, "<")
-      .to(bunnySvg, { x: 0, duration: 0.35, ease: "sine.out" });
+      .to(bunnySvg, { x: 10,      duration: 0.35, ease: "sine.inOut" }, "<")
+      .to(bunnySvg, { x: 0,       duration: 0.35, ease: "sine.out" });
   }, 3100);
 
   setTimeout(() => {
@@ -421,6 +358,22 @@ function playSystemBowlBeat() {
     captionSmall.textContent = "Found it. The system settles.";
     gsap.to(bunnySvg, { scaleX: 1, duration: 0.35, ease: "power2.out" });
   }, 5200);
+}
+
+// -------------------------
+// Mistake
+function playMistake() {
+  captionSmall.textContent = "I pause. I breathe. I try again.";
+
+  gsap.timeline()
+    .to(bunnySvg, { y: -18, duration: 0.25, ease: "power2.out" })
+    .to(bunnySvg, { y: 10,  duration: 0.22, ease: "power2.in" })
+    .to(bunnySvg, { x: -16, y: 8,  scale: 0.98, duration: 0.35, ease: "power2.out" })
+    .to(bunnySvg, { x: 0,   y: 0,  scale: 1,    duration: 0.55, ease: "sine.out" });
+
+  setTimeout(() => {
+    captionSmall.textContent = "Different angle. New attempt.";
+  }, 900);
 }
 
 // -------------------------
@@ -435,11 +388,10 @@ function applyMode(step) {
     2: "swipe",
     3: "fadeUp",
     4: "jitter",
-    5: "swipe",
-    6: "fadeUp",
-    7: "softPop",
-    8: "jitter",
-    9: "softPop",
+    5: "fadeUp",
+    6: "softPop",
+    7: "jitter",
+    8: "softPop",
   };
 
   animateCaptionChange(
@@ -449,13 +401,9 @@ function applyMode(step) {
 
   // Reset UI
   hideAllCallouts();
-  show(soundbar, false);
   setObjVisible(bowl, false);
   setObjVisible(box, false);
-  stopListening();
   showHay(false);
-
-  // Stop any run leg cycle if user scrolls mid-run
   stopLegRun();
 
   // Title-only
@@ -469,56 +417,29 @@ function applyMode(step) {
   }
 
   // light
-  const lightByStep = { 1: 0.45, 2: 0.55, 3: 0.60, 4: 0.50, 5: 0.52, 6: 0.62, 7: 0.58, 8: 0.48, 9: 0.66 };
+  const lightByStep = { 1: 0.45, 2: 0.55, 3: 0.60, 4: 0.50, 5: 0.62, 6: 0.58, 7: 0.48, 8: 0.66 };
   setLightProgress(lightByStep[step] ?? 0.55);
 
   // camera
   const camera = {
-    1: { scale: 1.02, y: 0 },
+    1: { scale: 1.02, y: 0  },
     2: { scale: 1.04, y: -2 },
-    3: { scale: 1.03, y: 0 },
+    3: { scale: 1.03, y: 0  },
     4: { scale: 1.05, y: -4 },
-    5: { scale: 1.02, y: 0 },
-    6: { scale: 1.00, y: 2 },
-    7: { scale: 1.01, y: 0 },
-    8: { scale: 1.06, y: -6 },
-    9: { scale: 1.00, y: 4 },
+    5: { scale: 1.00, y: 2  },
+    6: { scale: 1.01, y: 0  },
+    7: { scale: 1.06, y: -6 },
+    8: { scale: 1.00, y: 4  },
   }[step] || { scale: 1.02, y: 0 };
 
   gsap.to(bunnySvg, { scale: camera.scale, duration: 0.6, ease: "power2.out", overwrite: true });
-  gsap.to(bunnySvg, { y: camera.y, duration: 0.6, ease: "power2.out", overwrite: true });
+  gsap.to(bunnySvg, { y: camera.y,         duration: 0.6, ease: "power2.out", overwrite: true });
 
-  // Mode behaviors
-  if (s.mode === "arrival") {
-    playArrival();
-    return;
-  }
-
-  if (s.mode === "firstContact") {
-    showHay(true);
-    return;
-  }
-
-  if (s.mode === "naming") {
-    showCallouts(variableCallouts);
-    return;
-  }
-
-  if (s.mode === "switch") {
-    showCallouts(conditionalButtons);
-    return;
-  }
-
-  if (s.mode === "listening") {
-    show(soundbar, true);
-    startListening();
-    return;
-  }
-
-  if (s.mode === "system") {
-    playSystemBowlBeat();
-    return;
-  }
+  if (s.mode === "arrival")      { playArrival();         return; }
+  if (s.mode === "firstContact") { showHay(true);         return; }
+  if (s.mode === "naming")       { showCallouts(variableCallouts);    return; }
+  if (s.mode === "switch")       { showCallouts(conditionalButtons);  return; }
+  if (s.mode === "system")       { playSystemBowlBeat();  return; }
 
   if (s.mode === "memory") {
     setObjVisible(bowl, true);
@@ -527,14 +448,8 @@ function applyMode(step) {
     return;
   }
 
-  if (s.mode === "mistake") {
-    playMistake();
-    return;
-  }
-
-  if (s.mode === "closing") {
-    setObjVisible(box, true);
-  }
+  if (s.mode === "mistake")  { playMistake();           return; }
+  if (s.mode === "closing")  { setObjVisible(box, true); }
 }
 
 // -------------------------
@@ -562,7 +477,8 @@ const io = new IntersectionObserver(
 
 steps.forEach((s) => io.observe(s));
 
-// progress helpers
+// -------------------------
+// RAF progress helpers
 function getProgress(el) {
   const r = el.getBoundingClientRect();
   const vh = window.innerHeight;

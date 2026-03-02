@@ -76,10 +76,11 @@
 html, body { height: 100%; }
 
 body {
-  margin: 0;
+  margin:      0;
   background:  var(--primary-20);
   color:       var(--secondary-90);
   font-family: var(--font-body);
+  overflow-x:  hidden; /* prevent page-level horizontal scroll */
 }
 
 
@@ -87,16 +88,17 @@ body {
 
 .stage {
   min-height: 100vh;
-  position: relative;
+  position:   relative;
 }
 
 .frame {
-  position:  sticky;
-  top:       0;
-  height:    100vh;
-  padding:   var(--s);
-  display:   grid;
+  position:    sticky;
+  top:         0;
+  height:      100vh;
+  padding:     var(--s);
+  display:     grid;
   place-items: center;
+  overflow:    hidden; /* clips ears without causing page scroll */
 }
 
 .frame::before {
@@ -113,10 +115,10 @@ body {
 /* ─── Background / Atmosphere ────────────────────────────────────────── */
 
 .bg {
-  position:      absolute;
-  inset:         14px;
-  border-radius: var(--radius);
-  overflow:      hidden;
+  position:       absolute;
+  inset:          14px;
+  border-radius:  var(--radius);
+  overflow:       hidden;
   pointer-events: none;
 }
 
@@ -166,16 +168,16 @@ body {
 }
 
 /* Hide bunny + caption on title frame */
-.frame.is-title .scene          { visibility: hidden; opacity: 0; }
-.frame.is-title #captionArea    { opacity: 0; pointer-events: none; }
+.frame.is-title .scene       { visibility: hidden; opacity: 0; }
+.frame.is-title #captionArea { opacity: 0; pointer-events: none; }
 
 
-/* ─── Bunny ───────────────────────────────────────────────────────────── */
+/* ─── Bunny ──────────────────────────────────────────────────────────── */
 
 .bunny {
-  width:          100%;
-  height:         auto;
-  filter:         drop-shadow(0 18px 28px rgba(0,0,0,.12));
+  width:            100%;
+  height:           auto;
+  filter:           drop-shadow(0 18px 28px rgba(0,0,0,.12));
   transform-origin: 50% 80%;
 }
 
@@ -190,17 +192,17 @@ body {
 }
 
 .hay {
-  width:         62px;
-  height:        18px;
-  border-radius: 999px;
-  background:    var(--tertiary-50);
-  left:          16%;
-  bottom:        26%;
-  z-index:       8;
-  box-shadow:    0 12px 18px rgba(0,0,0,.10);
-  cursor:        pointer;
-  transition:    transform 420ms ease, opacity 300ms ease;
-  opacity:       0;
+  width:          62px;
+  height:         18px;
+  border-radius:  999px;
+  background:     var(--tertiary-50);
+  left:           16%;
+  bottom:         26%;
+  z-index:        8;
+  box-shadow:     0 12px 18px rgba(0,0,0,.10);
+  cursor:         pointer;
+  transition:     transform 420ms ease, opacity 300ms ease;
+  opacity:        0;
   pointer-events: none;
 }
 
@@ -233,10 +235,10 @@ body {
 /* ─── Callouts ───────────────────────────────────────────────────────── */
 
 .callouts {
-  position:      absolute;
-  inset:         14px;
-  border-radius: var(--radius);
-  z-index:       7;
+  position:       absolute;
+  inset:          14px;
+  border-radius:  var(--radius);
+  z-index:        7;
   pointer-events: none;
 }
 
@@ -249,10 +251,10 @@ body {
   align-items: center;
   gap:       var(--xs);
 
-  padding:       var(--xs) var(--s);
-  border-radius: 999px;
-  background:    rgba(241,241,241,.78);
-  border:        1px solid rgba(0,0,0,.07);
+  padding:         var(--xs) var(--s);
+  border-radius:   999px;
+  background:      rgba(241,241,241,.78);
+  border:          1px solid rgba(0,0,0,.07);
   backdrop-filter: blur(10px);
 
   opacity:     0;
@@ -294,17 +296,17 @@ body {
 /* ─── Caption Area ───────────────────────────────────────────────────── */
 
 .captionArea {
-  position:       relative;
-  z-index:        2;
-  width:          min(900px, 92vw);
-  margin-top:     var(--s);
-  padding:        var(--s) var(--s) var(--m);
-  border-radius:  var(--s);
-  background:     rgba(241,241,241,.70);
-  border:         1px solid rgba(0,0,0,.07);
+  position:        relative;
+  z-index:         2;
+  width:           min(900px, 92vw);
+  margin-top:      var(--s);
+  padding:         var(--s) var(--s) var(--m);
+  border-radius:   var(--s);
+  background:      rgba(241,241,241,.70);
+  border:          1px solid rgba(0,0,0,.07);
   backdrop-filter: blur(10px);
-  overflow:       hidden;
-  transition:     opacity 300ms ease;
+  overflow:        hidden;
+  transition:      opacity 300ms ease;
 }
 
 .captionKicker {
@@ -334,48 +336,6 @@ body {
 .captionKicker { will-change: transform, opacity; }
 
 
-/* ─── Sound Bar ──────────────────────────────────────────────────────── */
-
-.soundbar {
-  position:       absolute;
-  z-index:        9;
-  left:           var(--s);
-  right:          var(--s);
-  bottom:         var(--s);
-  padding:        var(--s);
-  border-radius:  var(--s);
-  background:     rgba(241,241,241,.78);
-  border:         1px solid rgba(0,0,0,.07);
-  backdrop-filter: blur(10px);
-  opacity:        0;
-  transform:      translateY(8px);
-  transition:     opacity 500ms ease, transform 500ms ease;
-}
-
-.soundbar__label {
-  font-size:     12px;
-  color:         var(--muted);
-  margin-bottom: var(--xs);
-}
-
-.soundbar__row {
-  display:    flex;
-  gap:        6px;
-  align-items: center;
-  min-height: 18px;
-}
-
-.pulse {
-  width:         12px;
-  height:        12px;
-  border-radius: 999px;
-  background:    rgba(0,0,0,.15);
-}
-
-.pulse--caught  { background: rgba(216,154,127,.9); }
-.pulse--missed  { opacity: .55; }
-
-
 /* ─── Title Overlay ──────────────────────────────────────────────────── */
 
 .title {
@@ -387,7 +347,7 @@ body {
   place-items:   center;
   background:    radial-gradient(900px 520px at 50% 30%, rgba(255,255,255,.45), rgba(241,241,241,.78));
   border:        1px solid rgba(0,0,0,.06);
-  overflow:      hidden;
+  overflow:      visible; /* allow ears to extend outside */
   transition:    opacity 700ms ease, transform 700ms ease;
 }
 
@@ -435,25 +395,26 @@ body {
 /* ─── Bunny Ears (title decoration) ─────────────────────────────────── */
 
 .ears {
-  position:       absolute;
-  left:           0;
-  right:          0;
-  bottom:         -14px;
-  height:         62%;
-  pointer-events: none;
-  display:        flex;
+  position:        absolute;
+  left:            0;
+  right:           0;
+  bottom:          -14px;
+  height:          62%;
+  pointer-events:  none;
+  display:         flex;
   justify-content: space-between;
-  padding:        0 10%;
-  z-index:        1;
+  padding:         0 4%;
+  z-index:         1;
+  overflow:        visible;
 }
 
 .ear {
-  position:        relative;
-  width:           min(220px, 30vw);
-  height:          110%;
-  background:      var(--bunny-brown);
-  box-shadow:      0 18px 40px rgba(0,0,0,.10);
-  transform:       rotate(var(--rot, 0deg)) translateY(var(--ear-y, 0px));
+  position:         relative;
+  width:            min(160px, 22vw);
+  height:           110%;
+  background:       var(--bunny-brown);
+  box-shadow:       0 18px 40px rgba(0,0,0,.10);
+  transform:        rotate(var(--rot, 0deg)) translateY(var(--ear-y, 0px));
   transform-origin: 50% 100%;
   clip-path: polygon(
     50% 0%,  70% 6%,  88% 20%, 98% 42%, 100% 70%,
@@ -478,5 +439,5 @@ body {
 
 /* ─── Scroll Track ───────────────────────────────────────────────────── */
 
-.track { height: 1000vh; }
-.step  { height:  100vh; }
+.track { height: 900vh; } /* 9 steps × 100vh */
+.step  { height: 100vh; }

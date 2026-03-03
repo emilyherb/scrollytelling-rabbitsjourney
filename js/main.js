@@ -64,10 +64,8 @@ const SCENES = {
   2: { kicker: "First Contact", line: "I pushed something small. A piece of hay. It moved.",                     small: "Click the hay. Open DevTools → Console.",                   mode: "firstContact" },
   3: { kicker: "Naming Things", line: "Some feelings stay. Some change. I started to tell them apart.",          small: "States appear as names. Names make them manageable.",        mode: "naming" },
   4: { kicker: "The Switch",    line: "Not everything makes me run. But some things do.",                        small: "Click a conditional. Watch my body decide.",                mode: "switch" },
-  5: { kicker: "The System",    line: "Consistency isn't boring. It's why I can rest.",                          small: "One thing moves — and I notice immediately.",               mode: "system" },
-  6: { kicker: "The Memory",    line: "I remember what happens next. Even before it happens.",                   small: "Memory persists… until the world updates.",                 mode: "memory" },
-  7: { kicker: "The Mistake",   line: "I thought I understood. I didn't. I got stuck.",                          small: "Mistakes don't mean I'm broken. I try again.",              mode: "mistake" },
-  8: { kicker: "Understanding", line: "When something new arrives, I watch. I test. I learn. Then I rest.",      small: "I don't control everything. I understand enough.",          mode: "closing" },
+  5: { kicker: "The Memory",    line: "I remember what happens next. Even before it happens.",                   small: "Memory persists… until the world updates.",                 mode: "memory" },
+  6: { kicker: "Understanding", line: "When something new arrives, I watch. I test. I learn. Then I rest.",      small: "I don't control everything. I understand enough.",          mode: "closing" },
 };
 
 // -------------------------
@@ -287,7 +285,7 @@ function reactNeutral() {
 let nudges = 0;
 hay.addEventListener("click", () => {
   nudges++;
-  const dx = Math.min(180, nudges * 70);
+  const dx = -Math.min(180, nudges * 70);
   hay.style.transform = `translateX(${dx}px)`;
   console.log("[First Contact] hay moved:", dx);
   setMem({ nudges });
